@@ -1,6 +1,7 @@
 High Level Architecture
 
 - Laravel Core API
+```
 -- user management
 -- business entities
 --- projects
@@ -10,15 +11,21 @@ High Level Architecture
 -- API Versioning
 -- MySQL performance optimization
 -- Role based access
+-- chat group creation
+-- task creation
+-- private / public todo list creation
+--- purpose: 
 -- Tech:
 --- Laravel 11
 --- PHP 8.x
 --- MySQL
 --- Redis (cache)
 --- Queues
+```
 
 
 - Auth & Security
+```
 -- Solid Auth Service
 -- JWT or Sanctum auth
 -- Access & Refresh Tokens
@@ -31,27 +38,33 @@ High Level Architecture
 --- CSRF
 --- Token storage best practices
 --- Secure headers
+```
 
 
 - Real time chat service (Node.Js + Socket.io)
+```
 -- Websocket chat
 -- private & group rooms
 -- auth via JWT
 -- message persistance
 -- Redis pub/sub 
+```
 
 
 - AI service
+```
 -- RAG - ready architechture
 -- Async calls
 -- secure AI API usage
 -- const control
+```
 
 - Notification Service
+```
 -- Email / Push
 -- Queue based
 -- retry and DLQ logic
-
+```
 
 - Project architecture
 ```text-
@@ -77,18 +90,25 @@ app/
  ├── Listeners/
  ```
 
-- MySQL 
+- MySQL
+``` 
 -- for storing data
+```
 
 - radis 
+```
 -- for caching
+```
 
 - Request flow
+```
 user -> API Gateway -> Laravel Auth -> Task Service | Chat Service -> DB -> Response
+```
 
 - Why split chat into Node.js ?
+```
 -- Real time performance
 -- WebSocket friendliness
 -- Horizontal scaling
 -- Separation of concerns
-
+```
