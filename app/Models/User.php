@@ -34,6 +34,12 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
+    public function workspaces()
+    {
+        return $this->belongsToMany(Workspace::class, 'workspace_users')
+            ->withPivot('role_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
