@@ -1,0 +1,51 @@
+5️⃣ POLICIES (Fine-grained Authorization)
+
+Status: 🟡 PARTIALLY DONE (AND THAT’S OK)
+
+You correctly understood the distinction:
+
+Middleware → role/module level
+
+Policy → object ownership level
+
+At Day 3, it’s perfectly fine if:
+
+You created policies but didn’t fully wire them everywhere
+
+Or you documented intended usage
+
+We’ll strengthen this on Day 4 with Tasks.
+
+No penalty here.
+
+6️⃣ WHAT IS SLIGHTLY MISSING (MINOR, NOT BLOCKING)
+
+These are improvements, not failures.
+
+🟡 1. Workspace resolution strategy
+
+Right now, workspace is probably coming from:
+
+route param
+
+or request body
+
+Later, we should standardize:
+
+X-Workspace-Id header
+or
+
+{workspace} route binding
+
+Not needed today — just noting for Day 4/5.
+
+🟡 2. Permission caching (NOT NOW)
+
+Eventually:
+
+Cache permissions per role
+
+Avoid DB hits per request
+
+But do NOT implement this yet.
+Just mention it in docs later.
