@@ -4,7 +4,8 @@ namespace App\Application\DTOs;
 
 use App\Models\User;
 
-class UserDTO {
+class UserDTO
+{
     public function __construct(
         public string $name,
         public string $email,
@@ -20,11 +21,17 @@ class UserDTO {
         );
     }
 
-    public static function toArray(self|User $dto): array
+    public static function toArray(self|User|array $dto): array
     {
+        if (is_array($dto)) {
+            return [
+                'name' => $dto['name'] ?? '',
+                'email' => $dto['email'] ?? ''
+            ];
+        }
         return [
-            'name' => $dto->name,
-            'email' => $dto->email
+            'name' => $dto->name ?? '',
+            'email' => $dto->email ?? ''
         ];
     }
 }

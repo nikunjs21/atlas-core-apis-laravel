@@ -4,33 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Application\DTOs\RegisterDTO;
 use App\Application\DTOs\UserDTO;
+use App\Application\Services\Interfaces\AuthServiceInterface;
 use App\Application\Services\Interfaces\UserServiceInterface;
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
 
-    public function __construct(private UserServiceInterface $userService) {}
+    public function __construct(private UserServiceInterface $userService, private AuthServiceInterface $authService) {}
 
     public function register(RegisterRequest $request)
-    {   
-        $validated = $request->validated();
-        $dto = RegisterDTO::fromArray($validated);
-        $user = $this->userService->registerUser($dto);
-        $createdUser = UserDTO::toArray($user);
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $createdUser,
-        ], 201);
+    {
+        try {
+            $validated = $request->validated();
+            $dto = RegisterDTO::fromArray($validated);
+            $user = $this->userService->registerUser($dto);
+            $createdUser = UserDTO::toArray($user);
+            return response()->json([
+                'message' => 'User registered successfully',
+                'user' => $createdUser,
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred during registration'], 500);
+        }
     }
 
     public function me()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        $userData = UserDTO::toArray($user);
-        return response()->json([
-            'user' => $userData,
-        ]);
+        try {
+            $user = $this->authService->getAuthenticatedUser();
+            if (!$user) {
+                return response()->json(['error' => 'User Unauthorized'], 401);
+            }
+
+            return response()->json([
+                'user' => UserDTO::toArray($user),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching authenticated user: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while fetching user data'], 500);
+        }
     }
 }
