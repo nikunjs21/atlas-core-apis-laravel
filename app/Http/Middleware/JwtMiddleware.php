@@ -20,7 +20,11 @@ class JwtMiddleware
         try {
             JWTAuth::parseToken()->authenticate();
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'User Unauthorized',
+            ], 401);
         }
 
         return $next($request);

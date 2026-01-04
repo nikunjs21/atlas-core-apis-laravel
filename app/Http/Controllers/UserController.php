@@ -24,13 +24,22 @@ class UserController extends Controller
             $user = $this->userService->registerUser($dto);
             $createdUser = UserDTO::toArray($user);
             return response()->json([
+                'success' => true,
+                'data' => $createdUser,
                 'message' => 'User registered successfully',
-                'user' => $createdUser,
             ], 201);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred during registration'], 500);
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'An error occurred during registration',
+            ], 500);
         }
     }
 
@@ -39,15 +48,25 @@ class UserController extends Controller
         try {
             $user = $this->authService->getAuthenticatedUser();
             if (!$user) {
-                return response()->json(['error' => 'User Unauthorized'], 401);
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => 'User Unauthorized',
+                ], 401);
             }
 
             return response()->json([
-                'user' => UserDTO::toArray($user),
+                'success' => true,
+                'data' => UserDTO::toArray($user),
+                'message' => 'User fetched successfully',
             ]);
         } catch (\Exception $e) {
             Log::error('Error fetching authenticated user: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while fetching user data'], 500);
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'An error occurred while fetching user data',
+            ], 500);
         }
     }
 }

@@ -23,16 +23,25 @@ class AuthController extends Controller
 
             $login = $this->authService->login($credentials);
 
-            return response()->json([
-                'message' => 'Login successful',
-                ...$login
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'data' => $login,
+                    'message' => 'Login successful',
+                ]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->errors()], 422);
         } catch (InvalidCredentials $e) {
-            return response()->json(['error' => $e->getMessage()], 401);
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => $e->getMessage(),
+                ], 401);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred during login'], 500);
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => 'An error occurred during login',
+                ], 500);
         }
     }
 
@@ -40,7 +49,11 @@ class AuthController extends Controller
     {
         try {
             $this->authService->logout();
-            return response()->json(['message' => 'Successfully logged out']);
+                return response()->json([
+                    'success' => true,
+                    'data' => null,
+                    'message' => 'Successfully logged out',
+                ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during logout'], 500);
         }
@@ -50,10 +63,11 @@ class AuthController extends Controller
     {
         try {
             $refresh = $this->authService->refresh();
-            return response()->json([
-                'message' => 'Token refreshed successfully',
-                ...$refresh
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'data' => $refresh,
+                    'message' => 'Token refreshed successfully',
+                ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred during token refresh'], 500);
         }
