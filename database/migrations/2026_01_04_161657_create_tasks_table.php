@@ -13,13 +13,15 @@ return new class extends Migration
     {   // id, created_by, title, description, assignee, status, created_at, updated_at
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained('workspaces')->onDelete('cascade');
-            $table->integer('created_by');
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->integer('created_by')->constrained('users');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('assignee')->nullable();
-            $table->string('status')->default('todo');
+            $table->foreignId('assignee')->nullable()->constrained('users');
+            $table->enum('status', ['todo', 'in_progress', 'review', 'qa', 'deployed', 'done'])->default('todo');
             $table->timestamps();
+
+            $table->index(['workspace_id', 'assignee', 'status']);
         });
     }
 
